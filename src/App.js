@@ -5,7 +5,7 @@ import api from "./api"
 function App() {
 
     const [contacts, setContacts] = useState([])
-    const [value, setValue] = useState("")
+    const [state, setContact] = useState({ contact: "" })
 
     const fetchContacts = () => {
         axios.get(api.list)
@@ -17,22 +17,23 @@ function App() {
 
     const addContact = (e) => {
         e.preventDefault()
-        axios.post(api.add, value)
+
+        axios.post(api.add, state)
             .then(() => {
-              setValue("")
+              setContact({...state, contact: ""})
+              fetchContacts()
               alert("Contact added Succesfully!")
             })
             .catch((err) => console.log(err))
     }
 
     const handleChange = (e) => {
-        setValue({ [e.target.name]: e.target.value })
+        setContact({[e.target.name]: e.target.value})
     }
 
     useEffect(() => {
         fetchContacts()
     }, [])
-    console.log(contacts)
 
     return (
         <div>
@@ -47,6 +48,7 @@ function App() {
                     placeholder="Eg. John Doe"
                     name="contact"
                     id="contact"
+                    value={state.contact}
                     dataTestId="contact"
                     onChange={handleChange}
                 />

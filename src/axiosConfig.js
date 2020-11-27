@@ -1,8 +1,7 @@
 import axios from "axios"
 
-export default axios.create ({
-    baseURL : 'http://localhost:4000',
-    headers: {'Accept': 'application/json'},
-  })
+export default axios.create({
+    baseURL : 'https://spetaxi.herokuapp.com',
+    headers: { 'Accept': 'application/json' },
+})
 
- 
