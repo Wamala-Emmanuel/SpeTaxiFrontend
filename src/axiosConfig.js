@@ -1,7 +1,7 @@
 import axios from "axios"
 
 export default axios.create ({
-    baseURL : 'https://axios-app.firebaseio.com',
+    baseURL : 'http://localhost:4000',
     headers: {'Accept': 'application/json'},
   })
 
