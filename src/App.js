@@ -1,89 +1,86 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react"
 import axios from "./axiosConfig"
-import api from "./api"
 
 function App() {
+  const [contacts, setContacts] = useState([])
+  const [state, setContact] = useState({ contact: "", search: "" })
 
-    const [contacts, setContacts] = useState([])
-    const [state, setContact] = useState({ contact: "" })
+  const fetchContacts = () => {
+    axios
+      .get(process.env.REACT_APP_LIST)
+      .then((response) => setContacts(() => response.data))
+      .catch((err) => console.log(err))
+  }
 
-    const fetchContacts = () => {
-        axios.get(api.list)
-            .then((response) => {
-              setContacts(() => response.data)
-            })
-            .catch((err) => console.log(err))
-    }
+  const addContact = (e) => {
+    e.preventDefault()
 
-    const addContact = (e) => {
-        e.preventDefault()
-
-        axios.post(api.add, state)
-            .then(() => {
-              setContact({...state, contact: ""})
-              fetchContacts()
-              alert("Contact added Succesfully!")
-            })
-            .catch((err) => console.log(err))
-    }
-
-    const handleChange = (e) => {
-        setContact({[e.target.name]: e.target.value})
-    }
-
-    useEffect(() => {
+    axios
+      .post(process.env.REACT_APP_ADD, state)
+      .then(() => {
+        setContact({ ...state, contact: "" })
         fetchContacts()
-    }, [])
+        alert("Contact added Succesfully!")
+      })
+      .catch((err) => console.log(err))
+  }
 
-    return (
-        <div>
-            <form
-                method="POST"
-                onSubmit={addContact}
-            >
-                <label>Add Contact</label><br />
+  const contactList = contacts
+    .filter((contact) => contact.name.toLowerCase().includes(state.search) ? contact : null)
+    .map(({ name }, index) => {
+      return (
+        <tr>
+          <td>{++index}</td>
+          <td>{name}</td>
+        </tr>
+      )
+    })
 
-                <input
-                    type="text"
-                    placeholder="Eg. John Doe"
-                    name="contact"
-                    id="contact"
-                    value={state.contact}
-                    dataTestId="contact"
-                    onChange={handleChange}
-                />
+  useEffect(() => {
+    fetchContacts()
+  }, [])
 
-                <button
-                    type="submit"
-                >
-                    Add
-                </button>
-            </form>
+  return (
+    <div>
+      <form method="POST" onSubmit={addContact}>
+        <label>Add Contact</label>
+        <br />
 
-            <table>
-                <thead>
-                    <tr>
-                        <td>No.</td>
-                        <td>Contact</td>
-                    </tr>
-                </thead>
+        <input
+          type="text"
+          placeholder="Eg. John Doe"
+          name="contact"
+          id="contact"
+          value={state.contact}
+          onChange={(e) => setContact({ [e.target.name]: e.target.value })}
+        />
 
-                {contacts.map(({ name }, index) => {
-                    return (
-                        <tr>
-                            <td>
-                                {++index}
-                            </td>
-                            <td>
-                                {name}
-                            </td>
-                        </tr>
-                    )
-                })}
-            </table>
+        <button type="submit">Add</button>
+      </form>
 
-        </div>
-    )
+      <br />
+
+      <input
+        type="text"
+        placeholder="Type to search.."
+        name="search"
+        id="search"
+        value={state.search}
+        onChange={(e) => setContact({ [e.target.name]: e.target.value })}
+      />
+
+      <table>
+        <thead>
+          <tr>
+            <td>No.</td>
+            <td>Contact</td>
+          </tr>
+        </thead>
+
+        {contactList}
+      </table>
+    </div>
+  )
 }
 
 export default App

@@ -1,7 +1,7 @@
 import axios from "axios"
 
 export default axios.create({
-    baseURL : 'https://spetaxi.herokuapp.com',
+    baseURL : process.env.REACT_APP_API_KEY,
     headers: { 'Accept': 'application/json' },
 })
 
